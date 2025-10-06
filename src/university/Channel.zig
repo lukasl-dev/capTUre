@@ -281,3 +281,19 @@ pub fn find(query: []const u8) ?Channel {
 
     return null;
 }
+
+pub const ResolveError = error{UnknownChannel};
+pub fn resolve(query: []const u8) ResolveError![]const u8 {
+    const trimmed = std.mem.trim(u8, query, " \t\r\n");
+    if (trimmed.len == 0) return error.UnknownChannel;
+
+    if (std.Uri.parse(trimmed) catch null) |_| {
+        return trimmed;
+    }
+
+    if (find(trimmed)) |channel| {
+        return channel.url;
+    }
+
+    return error.UnknownChannel;
+}

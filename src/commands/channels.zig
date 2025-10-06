@@ -1,7 +1,7 @@
 const std = @import("std");
 const cli = @import("zig-cli");
 const Channel = @import("../university/Channel.zig");
-const ansi = @import("../ansi.zig");
+const ansi = @import("../cli/ansi.zig");
 
 var flags = struct {
     show_urls: bool = false,

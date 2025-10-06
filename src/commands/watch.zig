@@ -10,16 +10,16 @@ var flags = struct {
 
 pub fn command(r: *cli.AppRunner) !cli.Command {
     return cli.Command{
-        .name = "record",
+        .name = "watch",
         .description = .{
-            .one_line = "Record a channel.",
+            .one_line = "Watch a channel livestream via mpv.",
         },
         .options = try r.allocOptions(&.{
             cli.Option{
                 .long_name = "channel",
                 .short_alias = 'c',
                 .required = true,
-                .help = "The channel to record.",
+                .help = "The channel to watch.",
                 .value_name = "name/url",
                 .value_ref = r.mkRef(&flags.channel),
             },
@@ -64,63 +64,38 @@ fn run() !void {
                 ansi.dim,
                 ansi.reset,
             });
+            return err;
         }
         return err;
     };
 
-    try record(arena.allocator(), writer, resolved_url);
-}
-
-fn record(
-    arena: std.mem.Allocator,
-    stdout: *std.Io.Writer,
-    url: []const u8,
-) !void {
-    const timestamp = std.time.timestamp();
-    const filename = try std.fmt.allocPrint(
-        arena,
-        "capTUre-{d}.ts",
-        .{timestamp},
-    );
-
-    try stdout.print("{s}→ Recording from{s} {s}{s}{s}\n", .{
+    try writer.print("{s}→ Watching from{s} {s}{s}{s}\n", .{
         ansi.green,
         ansi.reset,
         ansi.bold,
-        url,
+        resolved_url,
         ansi.reset,
     });
-    try stdout.print("{s}→ Output file:{s} {s}{s}{s}\n", .{
-        ansi.green,
-        ansi.reset,
-        ansi.bold,
-        filename,
-        ansi.reset,
-    });
-    try stdout.flush();
+    try writer.flush();
+
+    const alloc = arena.allocator();
 
     var args: std.ArrayList([]const u8) = .empty;
-    try args.appendSlice(arena, &.{
-        "ffmpeg",
-        "-hide_banner",
-        "-loglevel",
-        "warning",
-        "-headers",
-        "Referer: https://tuwel.tuwien.ac.at\r\n",
-        "-i",
-        url,
-        "-c",
-        "copy",
-        filename,
+    try args.appendSlice(alloc, &.{
+        "mpv",
+        "--no-terminal",
+        "--really-quiet",
+        "--referrer=https://tuwel.tuwien.ac.at",
+        resolved_url,
     });
 
-    var child = std.process.Child.init(args.items, arena);
+    var child = std.process.Child.init(args.items, alloc);
     child.stdin_behavior = .Inherit;
     child.stdout_behavior = .Inherit;
     child.stderr_behavior = .Inherit;
 
     child.spawn() catch |err| {
-        try stdout.print("{s}Failed to start ffmpeg: {s}{s}\n", .{
+        try writer.print("{s}Failed to start mpv: {s}{s}\n", .{
             ansi.red,
             @errorName(err),
             ansi.reset,
@@ -129,11 +104,11 @@ fn record(
     };
 
     var spinner = Spinner{};
-    try spinner.start("Recording", ansi.cyan);
+    try spinner.start("Watching", ansi.cyan);
 
     const term = child.wait() catch |err| {
         spinner.stop();
-        try stdout.print("{s}ffmpeg wait failed: {s}{s}\n", .{
+        try writer.print("{s}mpv wait failed: {s}{s}\n", .{
             ansi.red,
             @errorName(err),
             ansi.reset,
@@ -150,14 +125,14 @@ fn record(
     switch (term) {
         .Exited => |code| {
             if (code == 0) {
-                try stdout.print("{s}✔ Recording finished after {d}:{d:0>2}{s}\n", .{
+                try writer.print("{s}✔ Watching session ended after {d}:{d:0>2}{s}\n", .{
                     ansi.green,
                     minutes,
                     seconds,
                     ansi.reset,
                 });
             } else {
-                try stdout.print("{s}ffmpeg exited with code {d}.{s}\n", .{
+                try writer.print("{s}mpv exited with code {d}.{s}\n", .{
                     ansi.red,
                     code,
                     ansi.reset,
@@ -165,7 +140,7 @@ fn record(
             }
         },
         .Signal => |sig| {
-            try stdout.print("{s}ffmpeg terminated by signal {d}.{s}\n", .{
+            try writer.print("{s}mpv terminated by signal {d}.{s}\n", .{
                 ansi.red,
                 sig,
                 ansi.reset,
