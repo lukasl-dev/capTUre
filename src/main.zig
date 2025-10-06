@@ -1,5 +1,5 @@
 const std = @import("std");
-const capTUre = @import("capTUre");
+const assert = std.debug.assert;
 
 const cli = @import("zig-cli");
 
@@ -15,7 +15,9 @@ pub fn main() !void {
                 .detailed = "https://github.com/lukasl-dev/capTUre",
             },
             .target = cli.CommandTarget{
-                .subcommands = try r.allocCommands(&.{}),
+                .subcommands = try r.allocCommands(&.{
+                    try @import("./commands/channels.zig").command(&r),
+                }),
             },
         },
     };
