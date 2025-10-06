@@ -55,23 +55,15 @@ fn run() !void {
         });
     }
     inline for (Channel.common) |channel| {
-        if (flags.show_urls) {
-            try writer.print("  {s}>{s} {s}{s}{s}\n", .{
-                ansi.green,
-                ansi.reset,
-                ansi.bold,
-                channel.name,
-                ansi.reset,
-            });
-        } else {
-            try writer.print("  {s}>{s} {s}{s}{s}\n", .{
-                ansi.green,
-                ansi.reset,
-                ansi.bold,
-                channel.name,
-                ansi.reset,
-            });
-        }
+        const bullet = if (flags.show_urls) "> " else "- ";
+        try writer.print("  {s}{s}{s}{s}{s}{s}\n", .{
+            ansi.green,
+            bullet,
+            ansi.reset,
+            ansi.bold,
+            channel.name,
+            ansi.reset,
+        });
 
         if (flags.show_aliases) {
             if (channel.aliases.len > 0) {

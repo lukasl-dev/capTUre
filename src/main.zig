@@ -16,6 +16,7 @@ pub fn main() !void {
             },
             .target = cli.CommandTarget{
                 .subcommands = try r.allocCommands(&.{
+                    try @import("./commands/record.zig").command(&r),
                     try @import("./commands/channels.zig").command(&r),
                 }),
             },
