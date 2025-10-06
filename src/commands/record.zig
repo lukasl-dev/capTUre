@@ -6,6 +6,9 @@ const Spinner = @import("../cli/spinner.zig").Spinner;
 
 var flags = struct {
     channel: []const u8 = "",
+    output_file: ?[]const u8 = null,
+    format: ?[]const u8 = null,
+    ffmpeg_opts: []const []const u8 = &.{},
 }{};
 
 pub fn command(r: *cli.AppRunner) !cli.Command {
@@ -22,6 +25,30 @@ pub fn command(r: *cli.AppRunner) !cli.Command {
                 .help = "The channel to record.",
                 .value_name = "name/url",
                 .value_ref = r.mkRef(&flags.channel),
+            },
+            cli.Option{
+                .long_name = "output-file",
+                .short_alias = 'o',
+                .required = false,
+                .help = "File to write the recording to (default: capTUre-<timestamp>.ts).",
+                .value_name = "path",
+                .value_ref = r.mkRef(&flags.output_file),
+            },
+            cli.Option{
+                .long_name = "format",
+                .short_alias = 'f',
+                .required = false,
+                .help = "Container format to mux into (passed to ffmpeg -f).",
+                .value_name = "name",
+                .value_ref = r.mkRef(&flags.format),
+            },
+            cli.Option{
+                .long_name = "ffmpeg-opts",
+                .short_alias = 'F',
+                .required = false,
+                .help = "Additional ffmpeg options (repeatable).",
+                .value_name = "opt",
+                .value_ref = r.mkRef(&flags.ffmpeg_opts),
             },
         }),
         .target = cli.CommandTarget{
@@ -77,11 +104,21 @@ fn record(
     url: []const u8,
 ) !void {
     const timestamp = std.time.timestamp();
-    const filename = try std.fmt.allocPrint(
+    const base_filename = try std.fmt.allocPrint(
         arena,
         "capTUre-{d}.ts",
         .{timestamp},
     );
+
+    const output_path = blk: {
+        if (flags.output_file) |file| {
+            const trimmed = std.mem.trim(u8, file, " \t\r\n");
+            if (trimmed.len == 0) break :blk base_filename;
+            break :blk trimmed;
+        }
+
+        break :blk base_filename;
+    };
 
     try stdout.print("{s}→ Recording from{s} {s}{s}{s}\n", .{
         ansi.green,
@@ -94,7 +131,7 @@ fn record(
         ansi.green,
         ansi.reset,
         ansi.bold,
-        filename,
+        output_path,
         ansi.reset,
     });
     try stdout.flush();
@@ -109,10 +146,15 @@ fn record(
         "Referer: https://tuwel.tuwien.ac.at\r\n",
         "-i",
         url,
-        "-c",
-        "copy",
-        filename,
     });
+    if (flags.format) |fmt| {
+        try args.appendSlice(arena, &.{ "-f", fmt });
+    }
+    try args.appendSlice(arena, &.{ "-c", "copy" });
+    for (flags.ffmpeg_opts) |opt| {
+        try args.append(arena, opt);
+    }
+    try args.append(arena, output_path);
 
     var child = std.process.Child.init(args.items, arena);
     child.stdin_behavior = .Inherit;
