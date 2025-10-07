@@ -9,6 +9,10 @@
       url = "github:zigtools/zls";
       inputs.zig-overlay.follows = "zig-overlay";
     };
+    gitignore = {
+      url = "github:hercules-ci/gitignore.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -18,6 +22,7 @@
       systems,
       zig-overlay,
       zls,
+      gitignore,
     }:
     let
       forEachSystem = nixpkgs.lib.genAttrs (import systems);
@@ -34,6 +39,36 @@
               zig-overlay.packages.${system}.master
               zls.packages.${system}.zls
             ];
+          };
+        }
+      );
+
+      packages = forEachSystem (
+        system:
+        let
+          pkgs = import nixpkgs { inherit system; };
+          target = builtins.replaceStrings [ "darwin" ] [ "macos" ] system;
+        in
+        rec {
+          default = capTUre;
+          capTUre = pkgs.stdenvNoCC.mkDerivation {
+            name = "capTUre";
+            version = "master";
+            meta.mainProgram = "capTUre";
+            src = gitignore.lib.gitignoreSource ./.;
+            nativeBuildInputs = [ zig-overlay.packages.${system}.master ];
+            dontInstall = true;
+            doCheck = true;
+            configurePhase = ''
+              export ZIG_GLOBAL_CACHE_DIR=$TEMP/.cache
+            '';
+            buildPhase = ''
+              PACKAGE_DIR=${pkgs.callPackage ./deps.nix { }}
+              zig build install --system $PACKAGE_DIR -Dtarget=${target} -Doptimize=ReleaseSafe --color off --prefix $out
+            '';
+            checkPhase = ''
+              zig build test --system $PACKAGE_DIR -Dtarget=${target} --color off
+            '';
           };
         }
       );
