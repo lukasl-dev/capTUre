@@ -1,12 +1,12 @@
 # capTUre
 
-Capture, watch, and catalogue TU Wien LectureTube livestreams straight from your terminal.
+Capture, watch, and catalogue TU Vienna LectureTube livestreams straight from your terminal.
 
 ## Features
 
 - Record livestreams to local files with configurable container formats and passthrough ffmpeg options.
 - Watch channels live via mpv without having to look up LectureTube URLs manually.
-- Browse a curated list of frequently used TU Wien lecture halls and resolve short aliases to full stream URLs.
+- Browse a curated list of frequently used TU Vienna lecture halls and resolve short aliases to full stream URLs.
 - Ships with a spinner-based progress UI and coloured terminal output for better feedback while recording or watching.
 
 ## Prerequisites
