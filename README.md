@@ -36,6 +36,7 @@ nix develop           # drops you into a shell with zig master, zls, etc.
 ```
 
 Both commands rely on the `deps.nix` link farm generated from `build.zig.zon` and will fetch the pinned `zig-cli` dependency automatically.
+The packaged binary is wrapped so `ffmpeg` and `mpv` provided by Nix are on `PATH` at runtime.
 
 ## Usage
 
@@ -79,4 +80,3 @@ This spawns `mpv` with the correct referrer header so you can monitor the stream
 ## License
 
 Licensed under the GNU Affero General Public License v3.0. See `LICENSE` for details.
-

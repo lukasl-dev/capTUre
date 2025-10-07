@@ -38,6 +38,8 @@
             buildInputs = [
               zig-overlay.packages.${system}.master
               zls.packages.${system}.zls
+              pkgs.ffmpeg
+              pkgs.mpv
             ];
           };
         }
@@ -56,7 +58,14 @@
             version = "master";
             meta.mainProgram = "capTUre";
             src = gitignore.lib.gitignoreSource ./.;
-            nativeBuildInputs = [ zig-overlay.packages.${system}.master ];
+            nativeBuildInputs = [
+              zig-overlay.packages.${system}.master
+              pkgs.makeWrapper
+            ];
+            propagatedBuildInputs = [
+              pkgs.ffmpeg
+              pkgs.mpv
+            ];
             dontInstall = true;
             doCheck = true;
             configurePhase = ''
@@ -65,6 +74,15 @@
             buildPhase = ''
               PACKAGE_DIR=${pkgs.callPackage ./deps.nix { }}
               zig build install --system $PACKAGE_DIR -Dtarget=${target} -Doptimize=ReleaseSafe --color off --prefix $out
+            '';
+            postInstall = ''
+              wrapProgram $out/bin/capTUre \
+                --prefix PATH : ${
+                  pkgs.lib.makeBinPath [
+                    pkgs.ffmpeg
+                    pkgs.mpv
+                  ]
+                }
             '';
             checkPhase = ''
               zig build test --system $PACKAGE_DIR -Dtarget=${target} --color off
