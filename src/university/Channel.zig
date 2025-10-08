@@ -13,6 +13,8 @@ pub const common: []const Channel = &.{
             "aheg07-hs-7-schuette-lihotzky-bi",
             "hs7",
             "aheg07",
+            "schuette-lihotzky",
+            "schuette",
         },
     },
     .{
@@ -22,6 +24,8 @@ pub const common: []const Channel = &.{
             "ae0141-hs-8-heinz-parkus",
             "hs8",
             "ae0141",
+            "heinz-parkus",
+            "parkus",
         },
     },
     .{
@@ -31,6 +35,8 @@ pub const common: []const Channel = &.{
             "ae0239-hs-13-ernst-melan",
             "hs13",
             "ae0239",
+            "ernst-melan",
+            "melan",
         },
     },
     .{
@@ -40,6 +46,8 @@ pub const common: []const Channel = &.{
             "ae0341-hs-17-friedrich-hartmann",
             "hs17",
             "ae0341",
+            "friedrich-hartmann",
+            "hartmann",
         },
     },
     .{
@@ -49,6 +57,7 @@ pub const common: []const Channel = &.{
             "ae0238-hs-18-czuber",
             "hs18",
             "ae0238",
+            "czuber",
         },
     },
     .{
@@ -58,6 +67,8 @@ pub const common: []const Channel = &.{
             "aeeg40-hoersaal-6",
             "hoersaal-6",
             "aeeg40",
+            "hoersaal6",
+            "hs6",
         },
     },
     .{
@@ -68,6 +79,8 @@ pub const common: []const Channel = &.{
             "gm1",
             "bau178a",
             "audimax",
+            "gm-1",
+            "audi-max",
         },
     },
     .{
@@ -77,6 +90,8 @@ pub const common: []const Channel = &.{
             "bd01b33-gm-2-radinger-hoersaal",
             "gm2",
             "bd01b33",
+            "gm-2",
+            "radinger",
         },
     },
     .{
@@ -86,6 +101,8 @@ pub const common: []const Channel = &.{
             "ba02a05-gm-3-vortmann-hoersaal",
             "gm3",
             "ba02a05",
+            "gm-3",
+            "vortmann",
         },
     },
     .{
@@ -95,6 +112,8 @@ pub const common: []const Channel = &.{
             "bd02d32-gm-4-knoller-hoersaal",
             "gm4",
             "bd02d32",
+            "gm-4",
+            "knoller",
         },
     },
     .{
@@ -104,6 +123,8 @@ pub const common: []const Channel = &.{
             "bau276a-gm-5-praktikum-hs",
             "gm5",
             "bau276a",
+            "gm-5",
+            "praktikum",
         },
     },
     .{
@@ -113,6 +134,7 @@ pub const common: []const Channel = &.{
             "cdeg13-ei-7-hoersaal",
             "ei7",
             "cdeg13",
+            "ei-7",
         },
     },
     .{
@@ -122,6 +144,8 @@ pub const common: []const Channel = &.{
             "cdeg08-ei-8-poetzl-hs",
             "ei8",
             "cdeg08",
+            "ei-8",
+            "poetzl",
         },
     },
     .{
@@ -131,6 +155,8 @@ pub const common: []const Channel = &.{
             "caeg17-ei-9-hlawka-hs",
             "ei9",
             "caeg17",
+            "ei-9",
+            "hlawka",
         },
     },
     .{
@@ -140,6 +166,8 @@ pub const common: []const Channel = &.{
             "caeg31-ei-10-fritz-paschke-hs",
             "ei10",
             "caeg31",
+            "ei-10",
+            "fritz-paschke",
         },
     },
     .{
@@ -149,6 +177,7 @@ pub const common: []const Channel = &.{
             "dc02h03-fh-hoersaal-1",
             "fh1",
             "dc02h03",
+            "fh-hoersaal-1",
         },
     },
     .{
@@ -158,6 +187,7 @@ pub const common: []const Channel = &.{
             "da02g15-fh-hoersaal-5",
             "fh5",
             "da02g15",
+            "fh-hoersaal-5",
         },
     },
     .{
@@ -167,6 +197,7 @@ pub const common: []const Channel = &.{
             "da02k01-fh-hoersaal-6",
             "fh6",
             "da02k01",
+            "fh-hoersaal-6",
         },
     },
     .{
@@ -176,6 +207,8 @@ pub const common: []const Channel = &.{
             "db02h12-fh-8-noebauer-hs",
             "fh8",
             "db02h12",
+            "fh-8",
+            "noebauer",
         },
     },
     .{
@@ -185,6 +218,7 @@ pub const common: []const Channel = &.{
             "da02e08-sem-r-da-gruen-02-a",
             "da-gruen-02-a",
             "da02e08",
+            "dagruen02a",
         },
     },
     .{
@@ -194,6 +228,7 @@ pub const common: []const Channel = &.{
             "da02f20-sem-r-da-gruen-02-c",
             "da-gruen-02-c",
             "da02f20",
+            "dagruen02c",
         },
     },
     .{
@@ -203,6 +238,7 @@ pub const common: []const Channel = &.{
             "deu116-informatikhoersaal",
             "informatikhoersaal",
             "deu116",
+            "informatik-hoersaal",
         },
     },
     .{
@@ -212,6 +248,8 @@ pub const common: []const Channel = &.{
             "he0102-seminarraum-fav-01-a",
             "seminarraumfav-01-a",
             "he0102",
+            "fav01a",
+            "seminarraum-fav-01-a",
         },
     },
     .{
@@ -221,6 +259,8 @@ pub const common: []const Channel = &.{
             "heeg02-fav-hoersaal-1",
             "fav-hoersaal-1",
             "heeg02",
+            "fav1",
+            "fav-hs-1",
         },
     },
     .{
@@ -230,6 +270,8 @@ pub const common: []const Channel = &.{
             "ozeg80-hs-atrium-1",
             "hs-atrium-1",
             "ozeg80",
+            "hs-atrium1",
+            "atrium-1",
         },
     },
     .{
@@ -239,6 +281,8 @@ pub const common: []const Channel = &.{
             "ozeg76-hs-atrium-2",
             "hs-atrium-2",
             "ozeg76",
+            "hs-atrium2",
+            "atrium-2",
         },
     },
     .{
@@ -248,6 +292,8 @@ pub const common: []const Channel = &.{
             "ba02g02-seminarraum-ba-02a",
             "seminarraum-ba-02a",
             "ba02g02",
+            "ba-02a",
+            "seminarraum-ba02a",
         },
     },
     .{
@@ -257,6 +303,8 @@ pub const common: []const Channel = &.{
             "ba02a17-seminarraum-ba-02b",
             "seminarraum-ba-02b",
             "ba02a17",
+            "ba-02b",
+            "seminarraum-ba02b",
         },
     },
 };
