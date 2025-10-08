@@ -57,5 +57,10 @@
           };
         }
       );
+
+      nixosModules = rec {
+        default = capTUre;
+        capTUre = import ./nix/nixosModules/default.nix self;
+      };
     };
 }

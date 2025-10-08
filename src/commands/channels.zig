@@ -88,4 +88,6 @@ fn run() !void {
         }
     }
     try writer.print("\n", .{});
+
+    try writer.flush();
 }
