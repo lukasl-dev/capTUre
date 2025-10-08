@@ -8,7 +8,7 @@ self:
 
 let
   inherit (lib) types;
-  inherit (pkgs) coreutils;
+  inherit (pkgs) coreutils cacert ffmpeg mpv;
 
   timeType = types.addCheck types.str (s: builtins.match "^[0-2][0-9]:[0-5][0-9]$" s != null);
   cfg = config.services.capTUre;
@@ -16,7 +16,6 @@ let
   scheduleModule =
     { config, name, ... }:
     let
-      jobName = config.name;
       sanitized = lib.strings.sanitizeDerivationName name;
       channelArg = lib.escapeShellArg config.channel;
       script = pkgs.writeShellScript "capTUre-${sanitized}" ''
@@ -33,13 +32,6 @@ let
     in
     {
       options = {
-        name = lib.mkOption {
-          type = types.str;
-          default = name;
-          defaultText = "<attribute name>";
-          description = "Label for the recording job; also used in the output filename.";
-        };
-
         weekday = lib.mkOption {
           type = types.enum [
             "Monday"
@@ -77,11 +69,18 @@ let
       config = {
         atRoot = lib.mkIf cfg.enable {
           systemd.services."capTUre-${sanitized}" = {
-            description = "capTUre job ${jobName}";
+            description = "capTUre job ${name}";
             path = [
               cfg.package
               coreutils
+              ffmpeg
+              mpv
             ];
+            environment = {
+              SSL_CERT_FILE = "${cacert}/etc/ssl/certs/ca-bundle.crt";
+              SSL_CERT_DIR = "${cacert}/etc/ssl/certs";
+              HOME = "/var/lib/capTUre";
+            };
             serviceConfig = {
               Type = "oneshot";
               ExecStart = script;
@@ -92,7 +91,7 @@ let
           };
 
           systemd.timers."capTUre-${sanitized}" = {
-            description = "Timer for capTUre job ${jobName}";
+            description = "Timer for capTUre job ${name}";
             wantedBy = [ "timers.target" ];
             timerConfig = {
               OnCalendar = "${config.weekday} *-*-* ${config.start}:00";
@@ -129,7 +128,6 @@ in
       default = { };
       example = {
         morningLecture = {
-          name = "Theoretical Computer Science";
           weekday = "Monday";
           start = "07:30";
           duration = 60;
@@ -141,27 +139,25 @@ in
   };
 
   config = lib.mkIf cfg.enable (
-    lib.mkMerge (
-      [
-        {
-          environment.systemPackages = [ cfg.package ];
-          systemd.services = lib.mkMerge (
-            map (entry: entry.atRoot.systemd.services or { }) (lib.attrValues cfg.schedule)
-          );
-          systemd.timers = lib.mkMerge (
-            map (entry: entry.atRoot.systemd.timers or { }) (lib.attrValues cfg.schedule)
-          );
-        }
-        {
-          users.groups.${cfg.group} = { };
-          users.users.${cfg.user} = {
-            isSystemUser = true;
-            group = cfg.group;
-            home = "/var/lib/capTUre";
-            createHome = true;
-          };
-        }
-      ]
-    )
+    lib.mkMerge ([
+      {
+        environment.systemPackages = [ cfg.package ];
+        systemd.services = lib.mkMerge (
+          map (entry: entry.atRoot.systemd.services or { }) (lib.attrValues cfg.schedule)
+        );
+        systemd.timers = lib.mkMerge (
+          map (entry: entry.atRoot.systemd.timers or { }) (lib.attrValues cfg.schedule)
+        );
+      }
+      {
+        users.groups.${cfg.group} = { };
+        users.users.${cfg.user} = {
+          isSystemUser = true;
+          group = cfg.group;
+          home = "/var/lib/capTUre";
+          createHome = true;
+        };
+      }
+    ])
   );
 }
